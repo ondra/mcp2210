@@ -1,6 +1,13 @@
+
 import hid
 from mcp2210 import commands
 import time
+
+import sys
+if sys.version_info[0] < 3 and sys.version_info[1] < 6:
+    pre26=True
+else:
+    pre26=False
 
 
 class CommandException(Exception):
@@ -131,7 +138,10 @@ class MCP2210(object):
         Returns:
             A commands.Response instance, or raises a CommandException on error.
         """
-        command_data = [ord(x) for x in buffer(command)]
+        if pre26:
+            command_data = [ord(x) for x in buffer(command)]
+        else:
+            command_data = [x for x in bytearray(command)]
         self.hid.write(command_data)
         response_data = ''.join(chr(x) for x in self.hid.read(64))
         response = command.RESPONSE.from_buffer_copy(response_data)
