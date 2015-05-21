@@ -150,9 +150,6 @@ class MCP2210(object):
         self.hid.write(command_data)
         dat = self.hid.read(64)
         response_data = bytearray(x for x in dat)
-        if (len(response_data)) == 0:
-            print ("No response.")
-            return
         response = command.RESPONSE.from_buffer_copy(response_data)
         if response.status != 0:
             raise CommandException(response.status)
