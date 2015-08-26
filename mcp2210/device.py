@@ -75,7 +75,7 @@ class EEPROMData(object):
         if isinstance(key, slice):
             return ''.join(self[i] for i in range(*key.indices(255)))
         else:
-            return chr(self._device.sendCommand(commands.ReadEEPROMCommand(key)).header.reserved)
+            return chr(self._device.sendCommand(commands.ReadEEPROMCommand(key)).data)
 
     def __setitem__(self, key, value):
         if isinstance(key, slice):
