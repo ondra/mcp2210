@@ -92,7 +92,7 @@ class SetUSBStringCommand(SetBootSettingsCommand):
 
     @property
     def string(self):
-        return ''.join(chr(x) for x in self.str[:self.str_len - 2]).decode('utf16')
+        return ''.join(chr(x) for x in self.str[:self.str_len - 2])#.decode('utf16')
 
     @string.setter
     def string(self, value):
@@ -167,7 +167,7 @@ class GetUSBStringResponse(Response):
 
     @property
     def string(self):
-        return ''.join(chr(x) for x in self.str[:self.str_len - 2]).decode('utf16')
+        return ''.join(chr(x) for x in self.str[:self.str_len - 2])#.decode('utf16')
 
 
 class GetUSBProductCommand(GetBootSettingsCommand):

@@ -1,7 +1,22 @@
+
 import hid
 from mcp2210 import commands
 import time
+import sys
+import os
 
+HID_SEND_BUFFER_OFFSET = (1 if 'nt' in os.name or 'windows' in os.name else 0)
+#PY_PRE_2_6 = (True if sys.version_info[0] <= 2 and sys.version_info[1] < 6 else False)
+
+#buf should be an iterable of bytes with len <= 63
+def shift_buf(buf):
+    shifted = bytearray(len(buf)+HID_SEND_BUFFER_OFFSET)
+    for i in range(len(buf)):
+        shifted[HID_SEND_BUFFER_OFFSET+i] = buf[i]
+    return shifted
+
+def commandbuffer(struct):
+    return shift_buf(bytearray(struct))
 
 class CommandException(Exception):
     """Thrown when the MCP2210 returns an error status code."""
@@ -131,9 +146,10 @@ class MCP2210(object):
         Returns:
             A commands.Response instance, or raises a CommandException on error.
         """
-        command_data = [ord(x) for x in buffer(command)]
+        command_data = commandbuffer(command)
         self.hid.write(command_data)
-        response_data = ''.join(chr(x) for x in self.hid.read(64))
+        dat = self.hid.read(64)
+        response_data = bytearray(x for x in dat)
         response = command.RESPONSE.from_buffer_copy(response_data)
         if response.status != 0:
             raise CommandException(response.status)
